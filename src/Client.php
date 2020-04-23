@@ -48,7 +48,7 @@ class Client
 
 		$this->clientSecret = $clientSecret;
 
-		$this->folderPath = '/sites/'.$this->siteName.'/Shared%20Documents';
+		$this->folderPath = '/sites/' . $this->siteName . '/Shared%20Documents';
 
 		$this->folderPathExcludeList = [
 			'conversions'
@@ -65,10 +65,15 @@ class Client
 		];
 	}
 
+	public function getSiteUrl(): string
+	{
+		return $this->siteUrl;
+	}
+
 	/**
 	 * Create a folder at a given path.
 	 */
-	public function createFolder($path) : bool
+	public function createFolder($path): bool
 	{
 		$path = $this->normalizePath($path);
 
@@ -77,9 +82,9 @@ class Client
 			return true;
 		}
 
-		$this->folderPath = '/sites/'.$this->siteName.'/Shared%20Documents';
+		$this->folderPath = '/sites/' . $this->siteName . '/Shared%20Documents';
 
-		$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/folders';
+		$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/folders';
 
 		$this->requestHeaders['Content-Type'] = 'application/json;odata=verbose';
 
@@ -87,7 +92,7 @@ class Client
 			'__metadata' => [
 				'type' => 'SP.Folder',
 			],
-			'ServerRelativeUrl' => $this->folderPath.$path,
+			'ServerRelativeUrl' => $this->folderPath . $path,
 		];
 
 		$options = [
@@ -106,7 +111,7 @@ class Client
 	 * If the path is a folder, all its contents will be deleted too.
 	 * A successful response indicates that the file or folder was deleted.
 	 */
-	public function delete(string $path) : bool
+	public function delete(string $path): bool
 	{
 		$path = $this->normalizePath($path);
 
@@ -115,7 +120,7 @@ class Client
 			return true;
 		}
 
-		$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.$path.'\')';
+		$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
 
 		$this->requestHeaders['IF-MATCH'] = 'etag';
 
@@ -135,15 +140,15 @@ class Client
 	 *
 	 * Note: Metadata for the root folder is unsupported.
 	 */
-	public function getMetadata(string $path, array $mimeType) : array
+	public function getMetadata(string $path, array $mimeType): array
 	{
 		$path = $this->normalizePath($path);
 
 		// If plain/text, its a folder
 		if (substr($mimeType['mimetype'], 0, 4) === 'text') {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.$path.'\')';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
 		} else {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFileByServerRelativeUrl(\''.$this->folderPath.$path.'\')';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFileByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
 		}
 
 		$options = [
@@ -165,11 +170,11 @@ class Client
 	/**
 	 * Returns the contents of a folder.
 	 */
-	public function listFolder(string $path, bool $recursive = false) : array
+	public function listFolder(string $path, bool $recursive = false): array
 	{
 		$path = $this->normalizePath($path);
 
-		$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.$path.'\')/Folders';
+		$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $path . '\')/Folders';
 
 		$options = [
 			'headers' => $this->requestHeaders,
@@ -192,7 +197,7 @@ class Client
 	 *
 	 * https://msdn.microsoft.com/en-us/library/office/jj247198%28v=office.15%29.aspx
 	 */
-	public function copy(string $fromPath, string $toPath, array $mimeType) : bool
+	public function copy(string $fromPath, string $toPath, array $mimeType): bool
 	{
 		$fromPath = $this->normalizePath($fromPath);
 
@@ -200,9 +205,9 @@ class Client
 
 		// If plain/text, its a folder
 		if (substr($mimeType['mimetype'], 0, 4) === 'text') {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.$fromPath.'\')/copyTo(strNewUrl=\''.$this->folderPath.$toPath.'\', bOverWrite=true)';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $fromPath . '\')/copyTo(strNewUrl=\'' . $this->folderPath . $toPath . '\', bOverWrite=true)';
 		} else {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFileByServerRelativeUrl(\''.$this->folderPath.$fromPath.'\')/copyTo(strNewUrl=\''.$this->folderPath.$toPath.'\', bOverWrite=true)';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFileByServerRelativeUrl(\'' . $this->folderPath . $fromPath . '\')/copyTo(strNewUrl=\'' . $this->folderPath . $toPath . '\', bOverWrite=true)';
 		}
 
 		$options = [
@@ -219,7 +224,7 @@ class Client
 	 *
 	 * If the source path is a folder all its contents will be moved.
 	 */
-	public function move(string $fromPath, string $toPath, array $mimeType) : bool
+	public function move(string $fromPath, string $toPath, array $mimeType): bool
 	{
 		$fromPath = $this->normalizePath($fromPath);
 
@@ -227,9 +232,9 @@ class Client
 
 		// If plain/text, its a folder
 		if (substr($mimeType['mimetype'], 0, 4) === 'text') {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.$fromPath.'\')/moveTo(newUrl=\''.$this->folderPath.$toPath.'\')';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $fromPath . '\')/moveTo(newUrl=\'' . $this->folderPath . $toPath . '\')';
 		} else {
-			$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFileByServerRelativeUrl(\''.$this->folderPath.$fromPath.'\')/moveTo(newUrl=\''.$this->folderPath.$toPath.'\', flags=1)';
+			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFileByServerRelativeUrl(\'' . $this->folderPath . $fromPath . '\')/moveTo(newUrl=\'' . $this->folderPath . $toPath . '\', flags=1)';
 		}
 
 		$options = [
@@ -249,7 +254,7 @@ class Client
 	 *
 	 * @return bool
 	 */
-	public function upload(string $path, $contents) : array
+	public function upload(string $path, $contents): array
 	{
 		$path = trim($path, '/');
 
@@ -265,9 +270,9 @@ class Client
 		// Update the folder path
 		$folderPath = implode('/', $segments);
 
-		$this->folderPath = $this->folderPath.'/'.$folderPath;
+		$this->folderPath = $this->folderPath . '/' . $folderPath;
 
-		$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFolderByServerRelativeUrl(\''.$this->folderPath.'\')/Files/add(url=\''.$path.'\', overwrite=true)';
+		$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . '\')/Files/add(url=\'' . $path . '\', overwrite=true)';
 
 		$options = [
 			'headers' => $this->requestHeaders,
@@ -296,7 +301,7 @@ class Client
 	public function download(string $path)
 	{
 		// To get specific file data pass in the value you want e.g. /Name
-		$requestUrl = $this->siteUrl.'/sites/'.$this->siteName.'/_api/Web/GetFileByServerRelativeUrl(\''.$this->folderPath.$path.'\')';
+		$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFileByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
 
 		$options = [
 			'headers' => $this->requestHeaders,
@@ -307,7 +312,7 @@ class Client
 		return StreamWrapper::getResource($response->getBody());
 	}
 
-	protected function normalizePath(string $path) : string
+	protected function normalizePath(string $path): string
 	{
 		if (preg_match("/^id:.*|^rev:.*|^(ns:[0-9]+(\/.*)?)/", $path) === 1) {
 			return $path;
@@ -315,7 +320,7 @@ class Client
 
 		$path = trim($path, '/');
 
-		return ($path === '') ? '' : '/'.$path;
+		return ($path === '') ? '' : '/' . $path;
 	}
 
 	private function send(string $method, string $url, array $options)
@@ -324,7 +329,7 @@ class Client
 			$this->accessToken = session()->get('oauth.sharepoint.access_token');
 		}
 
-		$options['headers']['Authorization'] = 'Bearer '.$this->accessToken;
+		$options['headers']['Authorization'] = 'Bearer ' . $this->accessToken;
 
 		try {
 			return $this->client->request($method, $url, $options);
