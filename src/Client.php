@@ -144,8 +144,8 @@ class Client
 	{
 		$path = $this->normalizePath($path);
 
-		// If plain/text, its a folder
-		if (substr($mimeType['mimetype'], 0, 4) === 'text') {
+		// If empty extension, it's a folder
+		if (empty(pathinfo($path, PATHINFO_EXTENSION))) {
 			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFolderByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
 		} else {
 			$requestUrl = $this->siteUrl . '/sites/' . $this->siteName . '/_api/Web/GetFileByServerRelativeUrl(\'' . $this->folderPath . $path . '\')';
