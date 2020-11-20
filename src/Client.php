@@ -7,6 +7,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\StreamWrapper;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\{ClientException, RequestException};
+use Illuminate\Support\Str;
 
 class Client
 {
@@ -78,7 +79,7 @@ class Client
 		$path = $this->normalizePath($path);
 
 		// Check if the path contains folders we dont want to create
-		if (str_contains($path, $this->folderPathExcludeList)) {
+		if (Str::contains($path, $this->folderPathExcludeList)) {
 			return true;
 		}
 
@@ -116,7 +117,7 @@ class Client
 		$path = $this->normalizePath($path);
 
 		// Check if the path contains folders we dont want to delete
-		if (str_contains($path, $this->folderPathExcludeList)) {
+		if (Str::contains($path, $this->folderPathExcludeList)) {
 			return true;
 		}
 
